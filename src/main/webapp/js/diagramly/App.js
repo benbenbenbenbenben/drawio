@@ -200,7 +200,7 @@ App.pluginRegistry = {'4xAKTrabTpTzahoLthkwPNUn': '/plugins/explore.js',
 	'trees': '/plugins/trees/trees.js', 'import': '/plugins/import.js',
 	'replay': '/plugins/replay.js', 'anon': '/plugins/anonymize.js',
 	'tr': '/plugins/trello.js', 'f5': '/plugins/rackF5.js',
-	'drakon': '/plugins/drakon.js', 'vstsbp': '/plugins/vstsbp.js'};
+	'drakon': 'plugins/drakon.js', 'vstsbp': 'plugins/vstsbp.js'};
 
 /**
  * Function: authorize
