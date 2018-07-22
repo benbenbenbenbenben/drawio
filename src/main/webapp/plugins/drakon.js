@@ -90,6 +90,7 @@ const NAMES = {
     // SILHOUETTE is virtual
     // CONNECTOR ???
     // CONCURRENTPROC is an edge type (when a node connect to more than one other child node that connection becomes paralleled)
+    VIRTUALGOTO: "virtualGoto"
 }
 
 function findTerminators(route) {
@@ -112,16 +113,29 @@ function generateSource(ui) {
     // 1. for each start walk all connected nodes
     var routes = []
     for (var i in starts) {
+        var visited = []
         var walk = (self, level = 0) => {
+            var labeltarget = visited.filter(x => x.self && x.self == self)
+            if (labeltarget.length > 0) {
+                labeltarget[0].virtuallabel = `${i}_${labeltarget[0].type}_${labeltarget[0].level}`
+                var result = {
+                    type: NAMES.VIRTUALGOTO,
+                    target: `${i}_${labeltarget[0].type}_${labeltarget[0].level}`,
+                    self
+                }       
+                visited.push(result)         
+                return result
+            }
             var targets = self.edges.filter(x => x.source == self).map(e => e.target)
-            return {
+            var result = {
                 type: state(self).shape.cst.NAME,
                 self,
-                children: targets.map(t => walk(t, level + 1)),
                 level
             }
+            visited.push(result)            
+            result.children = targets.map(t => walk(t, level + 1))
+            return result
         }
-
         routes.push(walk(starts[i].cell))
     }
 
@@ -161,6 +175,8 @@ function generateSource(ui) {
             //    prog.emitEnd()
             //}
             for (var node of nodes) {
+                if (node.virtuallabel)
+                    prog.emitLabel(node.virtuallabel)
                 switch (node.type) {
                     case NAMES.ACTION:
                         prog.emitCall(node.self.value)
@@ -198,6 +214,7 @@ function generateSource(ui) {
                         break
                     case NAMES.LABEL:
                         prog.emitLabel(node.self.value)
+                        visit(node.children)
                         break
                     case NAMES.INSERTION:
                         prog.emitInsertion(node.self.value)
@@ -207,6 +224,9 @@ function generateSource(ui) {
                         if (node.children.length > 0)
                             throw "END cannot flow to another node"
                         prog.emitEnd()
+                        break
+                    case NAMES.VIRTUALGOTO:
+                        prog.emitGoto(node.target)
                         break
                     default:
                         break
