@@ -34,7 +34,7 @@ var BPIntegrator = /** @class */ (function () {
         // tree menu
         var ui = this.ui;
         mxResources.parse("vstsbp_project=Project");
-        this.ui.menus.put("vstsbp_diagrams", new Menu(function (menu, parent) {
+        this.ui.menus.put("vstsbp_project", new Menu(function (menu, parent) {
             // menu.addSeparator(parent)
             // this.ui.menus.addMenuItems(menu, ["vstsbp_item_0"], parent)
             ui.menus.addMenuItems(menu, ["foo, bar, zip"], parent);
@@ -44,7 +44,7 @@ var BPIntegrator = /** @class */ (function () {
         openFromMenu.funct = function (menu, parent) {
             funct.apply(this, arguments);
             menu.addSeparator(parent);
-            ui.menus.addSubmenu("vstsbp_diagrams", menu, parent);
+            ui.menus.addSubmenu("vstsbp_project", menu, parent);
         };
     };
     BPIntegrator.prototype.setupEvents = function () {
