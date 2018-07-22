@@ -2,6 +2,7 @@ var BPIntegrator = /** @class */ (function () {
     function BPIntegrator(graphui) {
         this.ui = graphui;
         this.setupEvents();
+        this.setupMenus();
         if (this.isEditMode()) {
             this.notifyParent("edit.ready");
         }
@@ -27,7 +28,24 @@ var BPIntegrator = /** @class */ (function () {
         this.ui.loadFile(file);
     };
     BPIntegrator.prototype.updateTree = function (tree) {
-        this.paths = tree;
+        this.tree = tree;
+    };
+    BPIntegrator.prototype.setupMenus = function () {
+        // tree menu
+        var ui = this.ui;
+        mxResources.parse("vstsbp_project=Project");
+        this.ui.menus.put("vstsbp_diagrams", new Menu(function (menu, parent) {
+            // menu.addSeparator(parent)
+            // this.ui.menus.addMenuItems(menu, ["vstsbp_item_0"], parent)
+            ui.menus.addMenuItems(menu, ["foo, bar, zip"], parent);
+        }));
+        var openFromMenu = this.ui.menus.get("openFrom");
+        var funct = openFromMenu.funct;
+        openFromMenu.funct = function (menu, parent) {
+            funct.apply(this, arguments);
+            menu.addSeparator(parent);
+            ui.menus.addSubmenu("vstsbp_diagrams", menu, parent);
+        };
     };
     BPIntegrator.prototype.setupEvents = function () {
         var _this = this;
